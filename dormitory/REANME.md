@@ -4,5 +4,6 @@
 
 ## 安装步骤
 1.克隆仓库：
-  git clone http://github.com/TongNian123/dormitory.git
+  git clone https://github.com/TongNian123/js-forever/tree/main/dormitory
+
 2.
