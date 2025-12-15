@@ -1,0 +1,2814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生宿舍管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .feature-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            margin-bottom: 30px;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .sidebar {
+            background-color: var(--dark-color);
+            color: white;
+            min-height: calc(100vh - 56px);
+            padding-top: 20px;
+        }
+
+        .sidebar .nav-link {
+            color: #bdc3c7;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .status-approved {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-rejected {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .login-container {
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+
+        .role-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .role-btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            border-radius: 5px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .role-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .alert-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 300px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .form-control:read-only {
+            background-color: #f8f9fa;
+            opacity: 1;
+        }
+
+        .dorm-card {
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .dorm-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .dorm-status-available {
+            border-left: 5px solid var(--success-color);
+        }
+
+        .dorm-status-full {
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .dorm-status-maintenance {
+            border-left: 5px solid var(--warning-color);
+        }
+
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .checkout-btn {
+            display: none;
+        }
+
+        /* 强制退宿按钮样式 */
+        .force-checkout-btn {
+            min-width: 80px;
+        }
+
+        /* 确保模态框有良好的过渡效果 */
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+        }
+
+        /* 按钮加载状态 */
+        .btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .alert-message .alert {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* 宿舍学生表格样式 */
+        #dormitoryStudentsTable tr:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-home me-2"></i>学生宿舍管理系统
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="homeLink"><i class="fas fa-home me-1"></i>首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="loginLink"><i class="fas fa-sign-in-alt me-1"></i>登录</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="registerLink"><i class="fas fa-user-plus me-1"></i>注册</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 消息提示区域 -->
+    <div id="alertContainer" class="alert-message"></div>
+
+    <!-- 首页内容 -->
+    <div id="homePage">
+        <!-- 英雄区域 -->
+        <section class="hero-section">
+            <div class="container">
+                <h1 class="display-4 fw-bold mb-4">学生宿舍管理系统</h1>
+                <div class="mt-5">
+                    <button class="btn btn-light btn-lg me-3" id="studentLoginBtn">学生登录</button>
+                    <button class="btn btn-outline-light btn-lg" id="adminLoginBtn">管理员登录</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 功能介绍 - 修改为两行两列布局 -->
+        <section class="py-5">
+            <div class="container">
+                <h2 class="text-center mb-5">系统功能</h2>
+
+                <!-- 第一行：两个功能卡片 -->
+                <div class="row mb-4">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="card feature-card text-center p-4">
+                            <div class="feature-icon">
+                                <i class="fas fa-user-edit"></i>
+                            </div>
+                            <h4>个人信息管理</h4>
+                            <p>学生可以查看和修改个人信息，保持信息最新状态</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="card feature-card text-center p-4">
+                            <div class="feature-icon">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                            <h4>宿舍信息管理</h4>
+                            <p>在线申请宿舍，查看申请状态，简化分配流程</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第二行：两个功能卡片 -->
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="card feature-card text-center p-4">
+                            <div class="feature-icon">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <h4>公告管理</h4>
+                            <p>及时获取宿舍相关通知和公告信息</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="card feature-card text-center p-4">
+                            <div class="feature-icon">
+                                <i class="fas fa-comment-dots"></i>
+                            </div>
+                            <h4>问题反馈管理</h4>
+                            <p>提交宿舍相关问题，获取管理员帮助</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 登录页面 -->
+    <div id="loginPage" class="container" style="display: none;">
+        <div class="login-container">
+            <h2 class="text-center mb-4">用户登录</h2>
+            <div class="role-selector">
+                <button class="role-btn active" id="studentRoleBtn">学生</button>
+                <button class="role-btn" id="adminRoleBtn">管理员</button>
+            </div>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="loginStudentId" class="form-label">学号</label>
+                    <input type="text" class="form-control" id="loginStudentId" required>
+                </div>
+                <div class="mb-3 position-relative">
+                    <label for="loginPassword" class="form-label">密码</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                    <span class="password-toggle" id="loginPasswordToggle">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary" id="loginSubmitBtn">登录</button>
+                </div>
+            </form>
+            <div class="text-center mt-3">
+                <p>还没有账号？<a href="#" id="toRegister">立即注册</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 注册页面 -->
+    <div id="registerPage" class="container" style="display: none;">
+        <div class="login-container">
+            <h2 class="text-center mb-4">学生注册</h2>
+            <form id="registerForm">
+                <div class="mb-3">
+                    <label for="regName" class="form-label">姓名</label>
+                    <input type="text" class="form-control" id="regName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="regGender" class="form-label">性别</label>
+                    <select class="form-control" id="regGender" required>
+                        <option value="">请选择</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="regAge" class="form-label">年龄</label>
+                    <input type="number" class="form-control" id="regAge" min="18" max="30" required>
+                </div>
+                <div class="mb-3">
+                    <label for="regStudentId" class="form-label">学号</label>
+                    <input type="text" class="form-control" id="regStudentId" required>
+                </div>
+                <div class="mb-3">
+                    <label for="regMajor" class="form-label">专业</label>
+                    <input type="text" class="form-control" id="regMajor" required>
+                </div>
+                <div class="mb-3">
+                    <label for="regPhone" class="form-label">电话</label>
+                    <input type="tel" class="form-control" id="regPhone" required>
+                </div>
+                <div class="mb-3 position-relative">
+                    <label for="regPassword" class="form-label">密码</label>
+                    <input type="password" class="form-control" id="regPassword" required>
+                    <span class="password-toggle" id="regPasswordToggle">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <div class="mb-3 position-relative">
+                    <label for="regConfirmPassword" class="form-label">确认密码</label>
+                    <input type="password" class="form-control" id="regConfirmPassword" required>
+                    <span class="password-toggle" id="regConfirmPasswordToggle">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary" id="registerSubmitBtn">注册</button>
+                </div>
+            </form>
+            <div class="text-center mt-3">
+                <p>已有账号？<a href="#" id="toLogin">立即登录</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 学生仪表板 -->
+    <div id="studentDashboard" style="display: none;">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- 侧边栏 -->
+                <div class="col-md-2 sidebar">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-section="studentProfile">
+                                <i class="fas fa-user-edit"></i>个人信息
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="studentDormApply">
+                                <i class="fas fa-bed"></i>宿舍申请
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="studentAnnouncements">
+                                <i class="fas fa-bullhorn"></i>公告查看
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="studentFeedback">
+                                <i class="fas fa-comment-dots"></i>问题反馈
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link" href="#" id="studentLogout">
+                                <i class="fas fa-sign-out-alt"></i>退出登录
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 主内容区 -->
+                <div class="col-md-10 p-4">
+                    <!-- 学生个人信息 -->
+                    <div class="dashboard-section active" id="studentProfile">
+                        <h2 class="mb-4">个人信息管理</h2>
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h5 class="card-title">基本信息</h5>
+                                    <div>
+                                        <button type="button" class="btn btn-primary" id="editProfileBtn">
+                                            <i class="fas fa-edit me-1"></i>编辑信息
+                                        </button>
+                                        <button type="button" class="btn btn-warning" id="changePasswordBtn">
+                                            <i class="fas fa-key me-1"></i>修改密码
+                                        </button>
+                                        <button type="button" class="btn btn-danger checkout-btn" id="checkoutBtn">
+                                            <i class="fas fa-sign-out-alt me-1"></i>退宿
+                                        </button>
+                                    </div>
+                                </div>
+                                <form id="studentProfileForm">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="studentName" class="form-label">姓名</label>
+                                            <input type="text" class="form-control" id="studentName" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="studentId" class="form-label">学号</label>
+                                            <input type="text" class="form-control" id="studentId" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label for="studentGender" class="form-label">性别</label>
+                                            <select class="form-control" id="studentGender" disabled>
+                                                <option value="">请选择</option>
+                                                <option value="男">男</option>
+                                                <option value="女">女</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="studentAge" class="form-label">年龄</label>
+                                            <input type="number" class="form-control" id="studentAge" min="18" max="30" readonly>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="studentMajor" class="form-label">专业</label>
+                                            <input type="text" class="form-control" id="studentMajor" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="studentPhone" class="form-label">电话</label>
+                                            <input type="tel" class="form-control" id="studentPhone" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="studentDorm" class="form-label">宿舍号</label>
+                                            <input type="text" class="form-control" id="studentDorm" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4" id="profileActionButtons" style="display: none;">
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-success me-2">保存修改</button>
+                                            <button type="button" class="btn btn-secondary" id="cancelEditBtn">取消</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 学生宿舍申请 -->
+                    <div class="dashboard-section" id="studentDormApply">
+                        <h2 class="mb-4">宿舍申请</h2>
+
+                        <!-- 当前申请状态 -->
+                        <div class="card dashboard-card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">当前申请状态</h5>
+                                <div id="applicationStatus">
+                                    <!-- 动态加载申请状态 -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 宿舍列表 -->
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">可选宿舍</h5>
+                                <div id="dormitoriesList" class="row">
+                                    <!-- 动态加载宿舍列表 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 学生公告查看 -->
+                    <div class="dashboard-section" id="studentAnnouncements">
+                        <h2 class="mb-4">公告查看</h2>
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div id="announcementsList">
+                                    <!-- 动态加载公告列表 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 学生问题反馈 -->
+                    <div class="dashboard-section" id="studentFeedback">
+                        <h2 class="mb-4">问题反馈</h2>
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">提交新反馈</h5>
+                                <form id="feedbackForm">
+                                    <div class="mb-3">
+                                        <label for="feedbackTitle" class="form-label">问题标题</label>
+                                        <input type="text" class="form-control" id="feedbackTitle" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="feedbackCategory" class="form-label">问题类别</label>
+                                        <select class="form-control" id="feedbackCategory" required>
+                                            <option value="">-- 请选择 --</option>
+                                            <option value="facility">设施问题</option>
+                                            <option value="hygiene">卫生问题</option>
+                                            <option value="noise">噪音问题</option>
+                                            <option value="security">安全问题</option>
+                                            <option value="other">其他问题</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="feedbackContent" class="form-label">问题描述</label>
+                                        <textarea class="form-control" id="feedbackContent" rows="4" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">提交反馈</button>
+                                </form>
+
+                                <h5 class="card-title mt-4">历史反馈</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>提交时间</th>
+                                                <th>问题标题</th>
+                                                <th>类别</th>
+                                                <th>状态</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="feedbackHistory">
+                                            <!-- 动态加载反馈历史 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理员仪表板 -->
+    <div id="adminDashboard" style="display: none;">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- 侧边栏 -->
+                <div class="col-md-2 sidebar">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-section="adminDormManagement">
+                                <i class="fas fa-building"></i>宿舍管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="adminApplicationManagement">
+                                <i class="fas fa-clipboard-list"></i>申请处理
+                                <span class="notification-badge" id="pendingAppsBadge">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="adminAnnouncementManagement">
+                                <i class="fas fa-bullhorn"></i>公告管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="adminFeedbackManagement">
+                                <i class="fas fa-comments"></i>反馈管理
+                                <span class="notification-badge" id="pendingFeedbacksBadge">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link" href="#" id="adminLogout">
+                                <i class="fas fa-sign-out-alt"></i>退出登录
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 主内容区 -->
+                <div class="col-md-10 p-4">
+                    <!-- 管理员宿舍管理 -->
+                    <div class="dashboard-section active" id="adminDormManagement">
+                        <h2 class="mb-4">宿舍管理</h2>
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5 class="card-title">宿舍列表</h5>
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDormModal">
+                                        <i class="fas fa-plus me-1"></i>添加宿舍
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>楼栋</th>
+                                                <th>房间号</th>
+                                                <th>容量</th>
+                                                <th>当前入住</th>
+                                                <th>状态</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dormitoriesTable">
+                                            <!-- 动态加载宿舍列表 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 管理员申请处理 -->
+                    <div class="dashboard-section" id="adminApplicationManagement">
+                        <h2 class="mb-4">申请处理</h2>
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">待处理申请</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>学号</th>
+                                                <th>学生姓名</th>
+                                                <th>申请时间</th>
+                                                <th>宿舍楼栋</th>
+                                                <th>房间号</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pendingApplicationsTable">
+                                            <!-- 动态加载待处理申请 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h5 class="card-title mt-4">申请历史</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>学号</th>
+                                                <th>学生姓名</th>
+                                                <th>申请时间</th>
+                                                <th>处理时间</th>
+                                                <th>状态</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="applicationHistoryTable">
+                                            <!-- 动态加载申请历史 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 管理员公告管理 -->
+                    <div class="dashboard-section" id="adminAnnouncementManagement">
+                        <h2 class="mb-4">公告管理</h2>
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5 class="card-title">公告列表</h5>
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">
+                                        <i class="fas fa-plus me-1"></i>发布公告
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>标题</th>
+                                                <th>发布时间</th>
+                                                <th>发布者</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="announcementsTable">
+                                            <!-- 动态加载公告列表 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 管理员反馈管理 -->
+                    <div class="dashboard-section" id="adminFeedbackManagement">
+                        <h2 class="mb-4">反馈管理</h2>
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">待处理反馈</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>学号</th>
+                                                <th>学生姓名</th>
+                                                <th>问题标题</th>
+                                                <th>提交时间</th>
+                                                <th>类别</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pendingFeedbacksTable">
+                                            <!-- 动态加载待处理反馈 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h5 class="card-title mt-4">已处理反馈</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>学号</th>
+                                                <th>学生姓名</th>
+                                                <th>问题标题</th>
+                                                <th>提交时间</th>
+                                                <th>处理时间</th>
+                                                <th>状态</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="resolvedFeedbacksTable">
+                                            <!-- 动态加载已处理反馈 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框等组件 -->
+    <div class="modal fade" id="addDormModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">添加宿舍</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addDormForm">
+                        <div class="mb-3">
+                            <label for="dormBuilding" class="form-label">楼栋</label>
+                            <input type="text" class="form-control" id="dormBuilding" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dormRoomNumber" class="form-label">房间号</label>
+                            <input type="text" class="form-control" id="dormRoomNumber" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dormCapacity" class="form-label">容量</label>
+                            <input type="number" class="form-control" id="dormCapacity" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dormDescription" class="form-label">描述</label>
+                            <textarea class="form-control" id="dormDescription" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="saveDormBtn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addAnnouncementModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">发布公告</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addAnnouncementForm">
+                        <div class="mb-3">
+                            <label for="announcementTitle" class="form-label">标题</label>
+                            <input type="text" class="form-control" id="announcementTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="announcementContent" class="form-label">内容</label>
+                            <textarea class="form-control" id="announcementContent" rows="5" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="saveAnnouncementBtn">发布</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑公告模态框 -->
+    <div class="modal fade" id="editAnnouncementModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">编辑公告</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editAnnouncementForm">
+                        <input type="hidden" id="editAnnouncementId">
+                        <div class="mb-3">
+                            <label for="editAnnouncementTitle" class="form-label">标题</label>
+                            <input type="text" class="form-control" id="editAnnouncementTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAnnouncementContent" class="form-label">内容</label>
+                            <textarea class="form-control" id="editAnnouncementContent" rows="5" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="saveEditAnnouncementBtn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">修改密码</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="changePasswordForm">
+                        <div class="mb-3 position-relative">
+                            <label for="currentPassword" class="form-label">当前密码</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                            <span class="password-toggle" onclick="togglePasswordVisibility('currentPassword')">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="newPassword" class="form-label">新密码</label>
+                            <input type="password" class="form-control" id="newPassword" required>
+                            <span class="password-toggle" onclick="togglePasswordVisibility('newPassword')">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <div class="mb-3 position-relative">
+                            <label for="confirmNewPassword" class="form-label">确认新密码</label>
+                            <input type="password" class="form-control" id="confirmNewPassword" required>
+                            <span class="password-toggle" onclick="togglePasswordVisibility('confirmNewPassword')">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="savePasswordBtn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 申请详情模态框 -->
+    <div class="modal fade" id="applicationDetailModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">申请详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="applicationDetailContent">
+                    <!-- 动态加载申请详情 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 反馈详情模态框 -->
+    <div class="modal fade" id="feedbackDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">反馈详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="feedbackDetailContent">
+                        <!-- 动态加载反馈详情 -->
+                    </div>
+                    <div id="feedbackResponseForm" class="mt-3">
+                        <!-- 动态加载反馈处理表单 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 宿舍学生信息模态框 -->
+    <div class="modal fade" id="dormitoryStudentsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dormitoryStudentsModalTitle">宿舍学生信息</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="dormitoryInfo">
+                        <!-- 宿舍基本信息 -->
+                    </div>
+                    <div class="table-responsive mt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>学号</th>
+                                    <th>姓名</th>
+                                    <th>性别</th>
+                                    <th>年龄</th>
+                                    <th>专业</th>
+                                    <th>电话</th>
+                                    <th>入住时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dormitoryStudentsTable">
+                                <!-- 动态加载学生信息 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 强制退宿确认模态框 -->
+    <div class="modal fade" id="forceCheckoutConfirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">强制退宿确认</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="forceCheckoutConfirmText"></p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        此操作将立即将该学生从宿舍中移除，学生需要重新申请宿舍！
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" id="confirmForceCheckoutBtn">确认强制退宿</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container text-center">
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ========== API 配置 ==========
+        const API_BASE = 'http://127.0.0.1:5000/api';
+        let currentUser = null;
+        let currentCheckoutStudent = null;
+
+        // ========== 时间处理函数 ==========
+        // 格式化时间显示
+        function formatDateTime(dateTimeStr) {
+            if (!dateTimeStr) {
+                return '未知时间';
+            }
+
+            try {
+                // 如果已经是格式化好的时间字符串，直接返回
+                if (typeof dateTimeStr === 'string' && dateTimeStr.includes(' ')) {
+                    // 检查是否已经是 "YYYY-MM-DD HH:MM:SS" 格式
+                    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(dateTimeStr)) {
+                        return dateTimeStr;
+                    }
+                }
+
+                // 如果是其他格式，尝试解析
+                const date = new Date(dateTimeStr);
+                if (isNaN(date.getTime())) {
+                    return dateTimeStr;
+                }
+
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            } catch (error) {
+                console.error('时间格式化错误:', error);
+                return dateTimeStr;
+            }
+        }
+
+        // 格式化日期（仅日期部分）
+        function formatDate(dateTimeStr) {
+            if (!dateTimeStr) {
+                return '未知日期';
+            }
+
+            try {
+                const date = new Date(dateTimeStr);
+                if (isNaN(date.getTime())) {
+                    return dateTimeStr;
+                }
+
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+
+                return `${year}-${month}-${day}`;
+            } catch (error) {
+                return dateTimeStr;
+            }
+        }
+
+        // ========== 通用工具函数 ==========
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertId = 'alert-' + Date.now();
+            const alertHTML = `
+                <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertContainer.innerHTML = alertHTML;
+
+            setTimeout(() => {
+                const alert = document.getElementById(alertId);
+                if (alert) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        function setLoading(element, isLoading) {
+            if (isLoading) {
+                element.classList.add('loading');
+                element.disabled = true;
+            } else {
+                element.classList.remove('loading');
+                element.disabled = false;
+            }
+        }
+
+        // 优化的API请求函数，添加超时处理
+        async function apiRequest(endpoint, options = {}) {
+            const url = `${API_BASE}${endpoint}`;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+
+            const config = {
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                },
+                signal: controller.signal,
+                ...options
+            };
+
+            if (options.body) {
+                config.body = JSON.stringify(options.body);
+            }
+
+            try {
+                const response = await fetch(url, config);
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error.name === 'AbortError') {
+                    console.error('API请求超时:', endpoint);
+                    return { success: false, message: '请求超时，请稍后重试' };
+                }
+                console.error('API请求错误:', error);
+                return { success: false, message: '网络错误，请稍后重试' };
+            }
+        }
+
+        // 密码显示/隐藏切换
+        function initPasswordToggle() {
+            document.querySelectorAll('.password-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    const icon = this.querySelector('i');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            });
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // HTML转义函数，防止XSS攻击
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // HTML反转义函数
+        function unescapeHtml(text) {
+            const elem = document.createElement('textarea');
+            elem.innerHTML = text;
+            return elem.value;
+        }
+
+        // ========== 用户认证相关函数 ==========
+        async function login(student_id, password) {
+            const result = await apiRequest('/login', {
+                method: 'POST',
+                body: { student_id, password }
+            });
+
+            if (result.success) {
+                currentUser = result.user;
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                return result;
+            }
+            return result;
+        }
+
+        async function register(userData) {
+            return await apiRequest('/register', {
+                method: 'POST',
+                body: userData
+            });
+        }
+
+        async function logout() {
+            const result = await apiRequest('/logout');
+            if (result.success) {
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+            }
+            return result;
+        }
+
+        async function getCurrentUser() {
+            return await apiRequest('/student/profile');
+        }
+
+        async function updateUser(userData) {
+            return await apiRequest('/student/profile', {
+                method: 'POST',
+                body: userData
+            });
+        }
+
+        async function changePassword(passwordData) {
+            return await apiRequest('/change-password', {
+                method: 'POST',
+                body: passwordData
+            });
+        }
+
+        // 学生退宿功能 - 修复版本
+        async function checkoutDormitory() {
+            return await apiRequest('/student/checkout', {
+                method: 'POST'
+            });
+        }
+
+        // 管理员强制退宿功能
+        async function adminForceCheckout(studentId) {
+            try {
+                // 设置请求超时
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const response = await fetch(`${API_BASE}/admin/students/${studentId}/checkout`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP错误! 状态码: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    throw new Error('请求超时，请稍后重试');
+                }
+                throw error;
+            }
+        }
+
+        // ========== 宿舍相关函数 ==========
+        async function getDormitories() {
+            return await apiRequest('/student/dormitories');
+        }
+
+        async function getAdminDormitories() {
+            return await apiRequest('/admin/dormitories');
+        }
+
+        async function addDormitory(dormData) {
+            return await apiRequest('/admin/dormitories', {
+                method: 'POST',
+                body: dormData
+            });
+        }
+
+        async function deleteDormitory(dormId) {
+            return await apiRequest(`/admin/dormitories/${dormId}`, {
+                method: 'DELETE'
+            });
+        }
+
+        // 获取宿舍学生信息
+        async function getDormitoryStudents(dormId) {
+            return await apiRequest(`/admin/dormitories/${dormId}/students`);
+        }
+
+        // ========== 申请相关函数 ==========
+        async function submitApplication(appData) {
+            return await apiRequest('/student/apply', {
+                method: 'POST',
+                body: appData
+            });
+        }
+
+        async function getMyApplications() {
+            return await apiRequest('/student/applications');
+        }
+
+        async function getAllApplications() {
+            return await apiRequest('/admin/applications');
+        }
+
+        async function processApplication(id, action, notes = '') {
+            return await apiRequest('/admin/applications', {
+                method: 'PUT',
+                body: {
+                    id: id,
+                    status: action === 'approve' ? 'approved' : 'rejected',
+                    admin_notes: notes
+                }
+            });
+        }
+
+        // ========== 公告相关函数 ==========
+        async function getAnnouncements() {
+            return await apiRequest('/student/announcements');
+        }
+
+        async function getAdminAnnouncements() {
+            return await apiRequest('/admin/announcements');
+        }
+
+        async function createAnnouncement(announcementData) {
+            return await apiRequest('/admin/announcements', {
+                method: 'POST',
+                body: announcementData
+            });
+        }
+
+        async function updateAnnouncement(id, announcementData) {
+            return await apiRequest('/admin/announcements', {
+                method: 'PUT',
+                body: {
+                    id: id,
+                    title: announcementData.title,
+                    content: announcementData.content
+                }
+            });
+        }
+
+        async function deleteAnnouncement(id) {
+            return await apiRequest(`/admin/announcements?id=${id}`, {
+                method: 'DELETE'
+            });
+        }
+
+        // ========== 反馈相关函数 ==========
+        async function submitFeedback(feedbackData) {
+            return await apiRequest('/student/feedback', {
+                method: 'POST',
+                body: feedbackData
+            });
+        }
+
+        async function getMyFeedbacks() {
+            return await apiRequest('/student/feedback');
+        }
+
+        async function getAllFeedbacks() {
+            return await apiRequest('/admin/feedbacks');
+        }
+
+        async function processFeedback(id, response) {
+            return await apiRequest('/admin/feedbacks', {
+                method: 'PUT',
+                body: { id: id, admin_response: response }
+            });
+        }
+
+        // ========== 页面初始化函数 ==========
+        function initPage() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+            }
+            showPage('homePage');
+            bindEventListeners();
+            initPasswordToggle();
+        }
+
+        function bindEventListeners() {
+            // 导航链接
+            document.getElementById('homeLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('homePage');
+            });
+
+            document.getElementById('loginLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('loginPage');
+            });
+
+            document.getElementById('registerLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('registerPage');
+            });
+
+            // 首页按钮
+            document.getElementById('studentLoginBtn').addEventListener('click', () => {
+                showPage('loginPage');
+                document.getElementById('studentRoleBtn').click();
+            });
+
+            document.getElementById('adminLoginBtn').addEventListener('click', () => {
+                showPage('loginPage');
+                document.getElementById('adminRoleBtn').click();
+            });
+
+            // 登录页面
+            document.getElementById('studentRoleBtn').addEventListener('click', () => {
+                setActiveRole('student');
+            });
+
+            document.getElementById('adminRoleBtn').addEventListener('click', () => {
+                setActiveRole('admin');
+            });
+
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('toRegister').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('registerPage');
+            });
+
+            // 注册页面
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('toLogin').addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('loginPage');
+            });
+
+            // 学生仪表板
+            document.querySelectorAll('#studentDashboard .nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (this.getAttribute('data-section')) {
+                        document.querySelectorAll('#studentDashboard .nav-link').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        this.classList.add('active');
+
+                        const sectionId = this.getAttribute('data-section');
+                        document.querySelectorAll('#studentDashboard .dashboard-section').forEach(section => {
+                            section.classList.remove('active');
+                        });
+                        document.getElementById(sectionId).classList.add('active');
+
+                        loadStudentSectionData(sectionId);
+                    }
+                });
+            });
+
+            document.getElementById('studentProfileForm').addEventListener('submit', handleStudentProfileUpdate);
+            document.getElementById('editProfileBtn').addEventListener('click', enableProfileEditing);
+            document.getElementById('cancelEditBtn').addEventListener('click', cancelProfileEditing);
+            document.getElementById('changePasswordBtn').addEventListener('click', showChangePasswordModal);
+            document.getElementById('checkoutBtn').addEventListener('click', handleCheckout);
+            document.getElementById('feedbackForm').addEventListener('submit', handleFeedbackSubmit);
+            document.getElementById('studentLogout').addEventListener('click', handleLogout);
+
+            // 管理员仪表板
+            document.querySelectorAll('#adminDashboard .nav-link').forEach(link => {
+                link.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    if (this.getAttribute('data-section')) {
+                        document.querySelectorAll('#adminDashboard .nav-link').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        this.classList.add('active');
+
+                        const sectionId = this.getAttribute('data-section');
+                        document.querySelectorAll('#adminDashboard .dashboard-section').forEach(section => {
+                            section.classList.remove('active');
+                        });
+                        document.getElementById(sectionId).classList.add('active');
+
+                        await loadAdminSectionData(sectionId);
+                    }
+                });
+            });
+
+            document.getElementById('adminLogout').addEventListener('click', handleLogout);
+
+            // 模态框按钮
+            document.getElementById('saveDormBtn').addEventListener('click', handleAddDormitory);
+            document.getElementById('saveAnnouncementBtn').addEventListener('click', handleAddAnnouncement);
+            document.getElementById('saveEditAnnouncementBtn').addEventListener('click', handleEditAnnouncementSave);
+            document.getElementById('savePasswordBtn').addEventListener('click', handleChangePassword);
+
+            // 绑定强制退宿确认按钮事件
+            document.getElementById('confirmForceCheckoutBtn').addEventListener('click', confirmForceCheckout);
+
+            // 添加模态框事件监听
+            document.getElementById('dormitoryStudentsModal').addEventListener('hidden.bs.modal', function () {
+                // 清除保存的宿舍ID
+                this.dataset.dormId = '';
+            });
+
+            document.getElementById('forceCheckoutConfirmModal').addEventListener('hidden.bs.modal', function () {
+                currentCheckoutStudent = null;
+            });
+        }
+
+        // ========== 事件处理函数 ==========
+        async function handleLogin(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('loginSubmitBtn');
+            setLoading(submitBtn, true);
+
+            const student_id = document.getElementById('loginStudentId').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const result = await login(student_id, password);
+
+            if (result.success) {
+                showAlert('登录成功', 'success');
+                if (result.user.role === 'student') {
+                    showStudentDashboard();
+                } else {
+                    showAdminDashboard();
+                }
+            } else {
+                showAlert(result.message, 'danger');
+            }
+
+            setLoading(submitBtn, false);
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('registerSubmitBtn');
+            setLoading(submitBtn, true);
+
+            const formData = {
+                name: document.getElementById('regName').value,
+                gender: document.getElementById('regGender').value,
+                age: parseInt(document.getElementById('regAge').value),
+                student_id: document.getElementById('regStudentId').value,
+                major: document.getElementById('regMajor').value,
+                phone: document.getElementById('regPhone').value,
+                password: document.getElementById('regPassword').value,
+                confirm_password: document.getElementById('regConfirmPassword').value
+            };
+
+            if (formData.password !== formData.confirm_password) {
+                showAlert('两次输入的密码不一致', 'danger');
+                setLoading(submitBtn, false);
+                return;
+            }
+
+            const result = await register(formData);
+
+            if (result.success) {
+                showAlert('注册成功，请登录', 'success');
+                showPage('loginPage');
+                document.getElementById('loginForm').reset();
+            } else {
+                showAlert(result.message, 'danger');
+            }
+
+            setLoading(submitBtn, false);
+        }
+
+        function enableProfileEditing() {
+            document.getElementById('studentName').readOnly = false;
+            document.getElementById('studentGender').disabled = false;
+            document.getElementById('studentAge').readOnly = false;
+            document.getElementById('studentMajor').readOnly = false;
+            document.getElementById('studentPhone').readOnly = false;
+            document.getElementById('profileActionButtons').style.display = 'block';
+            document.getElementById('editProfileBtn').style.display = 'none';
+        }
+
+        function cancelProfileEditing() {
+            document.getElementById('studentName').readOnly = true;
+            document.getElementById('studentGender').disabled = true;
+            document.getElementById('studentAge').readOnly = true;
+            document.getElementById('studentMajor').readOnly = true;
+            document.getElementById('studentPhone').readOnly = true;
+            document.getElementById('profileActionButtons').style.display = 'none';
+            document.getElementById('editProfileBtn').style.display = 'inline-block';
+            loadStudentUserInfo();
+        }
+
+        async function handleStudentProfileUpdate(e) {
+            e.preventDefault();
+            const formData = {
+                name: document.getElementById('studentName').value,
+                gender: document.getElementById('studentGender').value,
+                age: parseInt(document.getElementById('studentAge').value),
+                major: document.getElementById('studentMajor').value,
+                phone: document.getElementById('studentPhone').value
+            };
+
+            const result = await updateUser(formData);
+
+            if (result.success) {
+                showAlert('个人信息更新成功', 'success');
+                cancelProfileEditing();
+                await loadStudentUserInfo();
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        }
+
+        function showChangePasswordModal() {
+            document.getElementById('changePasswordForm').reset();
+            const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+            modal.show();
+        }
+
+        async function handleChangePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            if (!currentPassword || !newPassword || !confirmNewPassword) {
+                showAlert('请填写所有密码字段', 'danger');
+                return;
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                showAlert('新密码和确认密码不一致', 'danger');
+                return;
+            }
+
+            const result = await changePassword({
+                current_password: currentPassword,
+                new_password: newPassword
+            });
+
+            if (result.success) {
+                showAlert('密码修改成功', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        }
+
+        // 学生退宿处理函数
+        async function handleCheckout() {
+            if (!confirm('确定要退宿吗？退宿后您的床位将释放给其他学生，您可以重新申请其他宿舍。')) {
+                return;
+            }
+
+            try {
+                const result = await checkoutDormitory();
+
+                if (result.success) {
+                    showAlert(result.message, 'success');
+
+                    // 更新用户信息（立即从服务器获取最新状态）
+                    await loadStudentUserInfo();
+
+                    // 强制刷新所有相关数据
+                    await loadStudentSectionData('studentProfile');
+                    await loadStudentSectionData('studentDormApply');
+
+                    // 更新全局状态
+                    if (currentUser) {
+                        currentUser.hasDorm = false;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    }
+
+                } else {
+                    showAlert(result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('退宿操作错误:', error);
+                showAlert('退宿失败，请稍后重试', 'danger');
+            }
+        }
+
+        // 管理员强制退宿处理函数
+        function forceCheckout(studentId, studentNumber, studentName, dormId) {
+            currentCheckoutStudent = {
+                id: studentId,
+                number: studentNumber,
+                name: studentName,
+                dormId: dormId
+            };
+
+            document.getElementById('forceCheckoutConfirmText').innerHTML =
+                `确定要将学生 <strong>${studentName}</strong> (学号: ${studentNumber}) 强制退宿吗？`;
+
+            const modal = new bootstrap.Modal(document.getElementById('forceCheckoutConfirmModal'));
+            modal.show();
+        }
+
+        // 确认强制退宿
+        async function confirmForceCheckout() {
+            if (!currentCheckoutStudent) return;
+
+            const btn = document.getElementById('confirmForceCheckoutBtn');
+            const originalText = btn.innerHTML;
+
+            try {
+                // 显示加载状态
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>处理中...';
+                btn.disabled = true;
+
+                const result = await adminForceCheckout(currentCheckoutStudent.id);
+
+                if (result.success) {
+                    showAlert(result.message, 'success');
+
+                    // 关闭确认模态框
+                    const confirmModal = bootstrap.Modal.getInstance(document.getElementById('forceCheckoutConfirmModal'));
+                    if (confirmModal) {
+                        confirmModal.hide();
+                    }
+
+                    // 刷新宿舍列表
+                    await loadAdminSectionData('adminDormManagement');
+
+                    // 延迟一下，确保模态框完全关闭
+                    setTimeout(async () => {
+                        try {
+                            // 刷新宿舍学生信息
+                            await loadDormitoryStudents(currentCheckoutStudent.dormId);
+                        } catch (error) {
+                            console.error('刷新宿舍学生信息失败:', error);
+                        }
+                    }, 300);
+
+                } else {
+                    showAlert(result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('强制退宿失败:', error);
+                showAlert('强制退宿失败，请稍后重试', 'danger');
+            } finally {
+                // 恢复按钮状态
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                currentCheckoutStudent = null;
+            }
+        }
+
+        // 刷新宿舍学生信息（不关闭模态框）
+        async function loadDormitoryStudents(dormId) {
+            try {
+                const result = await getDormitoryStudents(dormId);
+
+                if (result.success) {
+                    // 更新宿舍基本信息
+                    document.getElementById('dormitoryInfo').innerHTML = `
+                        <div class="alert alert-info">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>楼栋：</strong>${result.dormitory.building}<br>
+                                    <strong>房间号：</strong>${result.dormitory.room_number}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>容量：</strong>${result.dormitory.capacity}人<br>
+                                    <strong>当前入住：</strong>${result.dormitory.current_occupancy}人<br>
+                                    <strong>状态：</strong>${result.dormitory.status === 'available' ? '可用' : result.dormitory.status === 'full' ? '已满' : '维护中'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // 更新学生表格
+                    const tableBody = document.getElementById('dormitoryStudentsTable');
+                    if (result.students.length > 0) {
+                        let html = '';
+                        result.students.forEach(student => {
+                            html += `
+                                <tr>
+                                    <td>${student.student_id}</td>
+                                    <td>${student.name}</td>
+                                    <td>${student.gender}</td>
+                                    <td>${student.age}</td>
+                                    <td>${student.major}</td>
+                                    <td>${student.phone}</td>
+                                    <td>${formatDate(student.joined_date)}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger force-checkout-btn"
+                                                onclick="forceCheckout(${student.id}, '${student.student_id}', '${student.name}', ${dormId})">
+                                            强制退宿
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        tableBody.innerHTML = html;
+                    } else {
+                        tableBody.innerHTML = '<tr><td colspan="8" class="text-center">该宿舍暂无学生入住</td></tr>';
+                    }
+                } else {
+                    showAlert(result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('刷新宿舍学生信息时出错:', error);
+                showAlert('刷新宿舍学生信息失败', 'danger');
+            }
+        }
+
+        // 查看宿舍学生信息
+        async function viewDormitoryStudents(dormId) {
+            try {
+                const result = await getDormitoryStudents(dormId);
+
+                if (result.success) {
+                    // 设置模态框标题
+                    document.getElementById('dormitoryStudentsModalTitle').textContent =
+                        `${result.dormitory.building}-${result.dormitory.room_number} 宿舍学生信息`;
+
+                    // 保存宿舍ID到模态框元素上，以便后续刷新使用
+                    const modalElement = document.getElementById('dormitoryStudentsModal');
+                    modalElement.dataset.dormId = dormId;
+
+                    // 加载学生信息
+                    await loadDormitoryStudents(dormId);
+
+                    // 显示模态框
+                    const modal = new bootstrap.Modal(document.getElementById('dormitoryStudentsModal'));
+                    modal.show();
+                } else {
+                    showAlert(result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('查看宿舍学生信息时出错:', error);
+                showAlert('获取宿舍学生信息失败', 'danger');
+            }
+        }
+
+        async function handleDormApplication(dormId) {
+            try {
+                // 先检查学生信息
+                const userInfo = await getCurrentUser();
+
+                if (!userInfo) {
+                    showAlert('请先登录', 'warning');
+                    return;
+                }
+
+                // 检查是否有宿舍
+                if (userInfo.dormitory && userInfo.dormitory !== '未分配') {
+                    showAlert('您已经有宿舍了，请先退宿再申请其他宿舍', 'warning');
+                    return;
+                }
+
+                // 检查是否有待处理的申请
+                const applications = await getMyApplications();
+                if (applications && applications.length > 0) {
+                    const hasPendingApp = applications.some(app =>
+                        app.status === 'pending' || app.status === 'approved'
+                    );
+                    if (hasPendingApp) {
+                        showAlert('您已有待处理的宿舍申请，请等待处理完成', 'warning');
+                        return;
+                    }
+                }
+
+                const result = await submitApplication({ dormitory_id: dormId });
+
+                if (result.success) {
+                    showAlert('宿舍申请提交成功', 'success');
+                    // 重新加载申请状态和宿舍列表
+                    await Promise.all([
+                        loadStudentApplications(),
+                        loadAvailableDorms()
+                    ]);
+                } else {
+                    showAlert(result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('申请宿舍时出错:', error);
+                showAlert('申请失败，请稍后重试', 'danger');
+            }
+        }
+
+        async function handleFeedbackSubmit(e) {
+            e.preventDefault();
+            const formData = {
+                title: document.getElementById('feedbackTitle').value,
+                content: document.getElementById('feedbackContent').value,
+                category: document.getElementById('feedbackCategory').value
+            };
+
+            const result = await submitFeedback(formData);
+
+            if (result.success) {
+                showAlert('反馈提交成功', 'success');
+                document.getElementById('feedbackForm').reset();
+                loadStudentSectionData('studentFeedback');
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        }
+
+        async function handleAddDormitory() {
+            const formData = {
+                building: document.getElementById('dormBuilding').value,
+                room_number: document.getElementById('dormRoomNumber').value,
+                capacity: parseInt(document.getElementById('dormCapacity').value),
+                description: document.getElementById('dormDescription').value
+            };
+
+            const result = await addDormitory(formData);
+
+            if (result.success) {
+                showAlert('宿舍添加成功', 'success');
+                document.getElementById('addDormForm').reset();
+                bootstrap.Modal.getInstance(document.getElementById('addDormModal')).hide();
+                loadAdminSectionData('adminDormManagement');
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        }
+
+        async function handleDeleteDormitory(dormId) {
+            if (confirm('确定要删除这个宿舍吗？此操作不可恢复。')) {
+                const result = await deleteDormitory(dormId);
+                if (result.success) {
+                    showAlert('宿舍删除成功', 'success');
+                    loadAdminSectionData('adminDormManagement');
+                } else {
+                    showAlert(result.message, 'danger');
+                }
+            }
+        }
+
+        async function handleAddAnnouncement() {
+            const title = document.getElementById('announcementTitle').value;
+            const content = document.getElementById('announcementContent').value;
+
+            if (!title || !content) {
+                showAlert('标题和内容不能为空', 'danger');
+                return;
+            }
+
+            const formData = {
+                title: title,
+                content: content
+            };
+
+            const result = await createAnnouncement(formData);
+
+            if (result.success) {
+                showAlert('公告发布成功', 'success');
+
+                // 重置表单
+                document.getElementById('addAnnouncementForm').reset();
+
+                // 关闭模态框
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addAnnouncementModal'));
+                if (modal) {
+                    modal.hide();
+                }
+
+                // 重新加载公告列表
+                setTimeout(async () => {
+                    await loadAdminAnnouncements();
+                }, 500);
+
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        }
+
+        // 编辑公告
+        function handleEditAnnouncement(id, title, content) {
+            document.getElementById('editAnnouncementId').value = id;
+            document.getElementById('editAnnouncementTitle').value = unescapeHtml(title);
+            document.getElementById('editAnnouncementContent').value = unescapeHtml(content);
+
+            const modal = new bootstrap.Modal(document.getElementById('editAnnouncementModal'));
+            modal.show();
+        }
+
+        // 删除公告
+        async function handleDeleteAnnouncement(annId) {
+            if (confirm('确定要删除这个公告吗？此操作不可恢复。')) {
+                const result = await deleteAnnouncement(annId);
+                if (result.success) {
+                    showAlert('公告删除成功', 'success');
+                    loadAdminAnnouncements();
+                } else {
+                    showAlert(result.message, 'danger');
+                }
+            }
+        }
+
+        // 保存编辑的公告
+        async function handleEditAnnouncementSave() {
+            const id = document.getElementById('editAnnouncementId').value;
+            const title = document.getElementById('editAnnouncementTitle').value;
+            const content = document.getElementById('editAnnouncementContent').value;
+
+            if (!title.trim() || !content.trim()) {
+                showAlert('标题和内容不能为空', 'danger');
+                return;
+            }
+
+            const result = await updateAnnouncement(id, { title, content });
+
+            if (result.success) {
+                showAlert('公告更新成功', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('editAnnouncementModal')).hide();
+                loadAdminAnnouncements();
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        }
+
+        // 处理申请
+        async function handleProcessApplication(appId, action) {
+            const notes = '';
+
+            const actionText = action === 'approve' ? '批准' : '拒绝';
+
+            if (confirm(`确定要${actionText}这个申请吗？`)) {
+                const result = await processApplication(appId, action, notes);
+
+                if (result.success) {
+                    showAlert(`申请${actionText}成功`, 'success');
+                    loadAdminApplications();
+                } else {
+                    showAlert(result.message, 'danger');
+                }
+            }
+        }
+
+        async function handleLogout(e) {
+            e.preventDefault();
+            const result = await logout();
+            if (result.success) {
+                showAlert('退出成功', 'success');
+                showPage('homePage');
+            }
+        }
+
+        // ========== 页面显示函数 ==========
+        function showPage(pageId) {
+            document.querySelectorAll('div[id$="Page"], div[id$="Dashboard"]').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById(pageId).style.display = 'block';
+
+            if (pageId === 'loginPage') {
+                document.getElementById('loginForm').reset();
+            } else if (pageId === 'registerPage') {
+                document.getElementById('registerForm').reset();
+            }
+        }
+
+        function showStudentDashboard() {
+            showPage('studentDashboard');
+            loadStudentUserInfo();
+            loadStudentSectionData('studentProfile');
+        }
+
+        function showAdminDashboard() {
+            showPage('adminDashboard');
+            loadAdminSectionData('adminDormManagement');
+        }
+
+        function setActiveRole(role) {
+            if (role === 'student') {
+                document.getElementById('studentRoleBtn').classList.add('active');
+                document.getElementById('adminRoleBtn').classList.remove('active');
+            } else {
+                document.getElementById('studentRoleBtn').classList.remove('active');
+                document.getElementById('adminRoleBtn').classList.add('active');
+            }
+        }
+
+        // ========== 数据加载函数 ==========
+        async function loadStudentUserInfo() {
+            try {
+                const result = await getCurrentUser();
+                if (result && typeof result === 'object') {
+                    document.getElementById('studentName').value = result.name || '';
+                    document.getElementById('studentId').value = result.student_id || '';
+                    document.getElementById('studentGender').value = result.gender || '';
+                    document.getElementById('studentAge').value = result.age || '';
+                    document.getElementById('studentMajor').value = result.major || '';
+                    document.getElementById('studentPhone').value = result.phone || '';
+                    document.getElementById('studentDorm').value = result.dormitory || '未分配';
+
+                    // 根据是否有宿舍显示/隐藏退宿按钮
+                    const checkoutBtn = document.getElementById('checkoutBtn');
+                    if (result.dormitory && result.dormitory !== '未分配') {
+                        checkoutBtn.style.display = 'inline-block';
+                    } else {
+                        checkoutBtn.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('获取用户信息时出错:', error);
+            }
+        }
+
+        async function loadStudentSectionData(sectionId) {
+            switch (sectionId) {
+                case 'studentProfile':
+                    await loadStudentUserInfo();
+                    break;
+                case 'studentDormApply':
+                    await loadStudentApplications();
+                    await loadAvailableDorms();
+                    break;
+                case 'studentAnnouncements':
+                    await loadStudentAnnouncements();
+                    break;
+                case 'studentFeedback':
+                    await loadStudentFeedbacks();
+                    break;
+            }
+        }
+
+        async function loadStudentApplications() {
+            try {
+                const result = await getMyApplications();
+                const statusDiv = document.getElementById('applicationStatus');
+
+                // 获取学生当前宿舍信息
+                const userInfo = await getCurrentUser();
+                const hasDorm = userInfo && userInfo.dormitory && userInfo.dormitory !== '未分配';
+
+                if (hasDorm) {
+                    statusDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>当前宿舍：</strong>${userInfo.dormitory}<br>
+                            <small>如需申请其他宿舍，请先退宿</small>
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (result && Array.isArray(result) && result.length > 0) {
+                    // 查找最新的有效申请
+                    const latestApp = result.find(app =>
+                        app.status === 'pending' || app.status === 'approved'
+                    );
+
+                    if (latestApp) {
+                        let statusClass = 'alert-info';
+                        let statusText = '待处理';
+                        let icon = 'fas fa-clock';
+
+                        if (latestApp.status === 'approved') {
+                            statusClass = 'alert-success';
+                            statusText = '已批准';
+                            icon = 'fas fa-check-circle';
+                        } else if (latestApp.status === 'rejected') {
+                            statusClass = 'alert-danger';
+                            statusText = '已拒绝';
+                            icon = 'fas fa-times-circle';
+                        } else if (latestApp.status === 'checked_out') {
+                            statusClass = 'alert-info';
+                            statusText = '已退宿';
+                            icon = 'fas fa-door-closed';
+                        } else if (latestApp.status === 'cancelled') {
+                            statusClass = 'alert-warning';
+                            statusText = '已取消';
+                            icon = 'fas fa-ban';
+                        }
+
+                        statusDiv.innerHTML = `
+                            <div class="alert ${statusClass}">
+                                <i class="${icon} me-2"></i>
+                                <strong>申请状态：</strong>${statusText}<br>
+                                <strong>宿舍：</strong>${latestApp.building}-${latestApp.room_number}<br>
+                                <strong>申请时间：</strong>${formatDateTime(latestApp.apply_date)}<br>
+                                ${latestApp.admin_notes ? `<small><strong>备注：</strong>${latestApp.admin_notes}</small>` : ''}
+                            </div>
+                        `;
+                    } else {
+                        statusDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>您尚未提交宿舍申请</div>';
+                    }
+                } else {
+                    statusDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>您尚未提交宿舍申请</div>';
+                }
+            } catch (error) {
+                console.error('加载申请信息时出错:', error);
+                document.getElementById('applicationStatus').innerHTML =
+                    '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>加载申请信息失败</div>';
+            }
+        }
+
+        async function loadAvailableDorms() {
+            try {
+                const result = await getDormitories();
+                const dormList = document.getElementById('dormitoriesList');
+
+                // 获取学生当前宿舍信息和申请状态
+                const userInfo = await getCurrentUser();
+                const applications = await getMyApplications();
+
+                const hasDorm = userInfo && userInfo.dormitory && userInfo.dormitory !== '未分配';
+
+                // 检查是否有待处理的申请
+                let hasPendingApplication = false;
+                if (applications && applications.length > 0) {
+                    hasPendingApplication = applications.some(app =>
+                        app.status === 'pending' || app.status === 'approved'
+                    );
+                }
+
+                if (result && Array.isArray(result) && result.length > 0) {
+                    let html = '';
+
+                    // 如果有宿舍或待处理申请，显示提示
+                    if (hasDorm) {
+                        html += `
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>当前宿舍：</strong>${userInfo.dormitory}
+                                    <br>
+                                    <small>如需申请其他宿舍，请先退宿</small>
+                                </div>
+                            </div>
+                        `;
+                    } else if (hasPendingApplication) {
+                        html += `
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    您有待处理的宿舍申请，请等待处理完成
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    result.forEach(dorm => {
+                        let statusClass = 'dorm-status-available';
+                        let statusText = '可申请';
+                        let badgeClass = 'bg-success';
+                        let canApply = dorm.status === 'available' && !hasDorm && !hasPendingApplication;
+
+                        if (dorm.status === 'full') {
+                            statusClass = 'dorm-status-full';
+                            statusText = '已满';
+                            badgeClass = 'bg-danger';
+                            canApply = false;
+                        } else if (dorm.status === 'maintenance') {
+                            statusClass = 'dorm-status-maintenance';
+                            statusText = '维护中';
+                            badgeClass = 'bg-warning';
+                            canApply = false;
+                        }
+
+                        html += `
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card dorm-card ${statusClass}">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title">${dorm.building} - ${dorm.room_number}</h5>
+                                            <span class="badge ${badgeClass}">${statusText}</span>
+                                        </div>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-users me-1"></i>容量: ${dorm.capacity}人<br>
+                                                <i class="fas fa-user-check me-1"></i>当前入住: ${dorm.current_occupancy}人
+                                            </small>
+                                        </p>
+                                        <p class="card-text">${dorm.description || '暂无描述'}</p>
+                                        ${canApply ?
+                                            `<button class="btn btn-primary btn-sm" onclick="handleDormApplication(${dorm.id})">
+                                                <i class="fas fa-paper-plane me-1"></i>申请入住
+                                            </button>` :
+                                            `<button class="btn btn-secondary btn-sm" disabled>
+                                                ${hasDorm ? '请先退宿' : hasPendingApplication ? '有待处理申请' : statusText}
+                                            </button>`
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    dormList.innerHTML = html;
+                } else {
+                    dormList.innerHTML = '<div class="col-12 text-center py-4"><p class="text-muted">暂无可用宿舍</p></div>';
+                }
+            } catch (error) {
+                console.error('加载宿舍信息时出错:', error);
+                document.getElementById('dormitoriesList').innerHTML =
+                    '<div class="col-12 text-center py-4"><p class="text-danger">加载宿舍信息失败</p></div>';
+            }
+        }
+
+        async function loadStudentAnnouncements() {
+            try {
+                const result = await getAnnouncements();
+                const announcementsDiv = document.getElementById('announcementsList');
+
+                if (result && Array.isArray(result) && result.length > 0) {
+                    let html = '<div class="list-group">';
+                    result.forEach(ann => {
+                        html += `
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">${ann.title}</h5>
+                                    <small>${formatDateTime(ann.created_at)}</small>
+                                </div>
+                                <p class="mb-1">${ann.content}</p>
+                                <small>发布者：${ann.admin_name}</small>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    announcementsDiv.innerHTML = html;
+                } else {
+                    announcementsDiv.innerHTML = '<div class="alert alert-info">暂无公告</div>';
+                }
+            } catch (error) {
+                console.error('加载公告时出错:', error);
+                document.getElementById('announcementsList').innerHTML = '<div class="alert alert-danger">加载公告失败</div>';
+            }
+        }
+
+        async function loadStudentFeedbacks() {
+            try {
+                const result = await getMyFeedbacks();
+                const feedbackHistory = document.getElementById('feedbackHistory');
+
+                if (result && Array.isArray(result) && result.length > 0) {
+                    let html = '';
+                    result.forEach(fb => {
+                        const statusClass = fb.status === 'resolved' ? 'status-approved' : 'status-pending';
+                        const statusText = fb.status === 'resolved' ? '已解决' : '处理中';
+
+                        html += `
+                            <tr>
+                                <td>${formatDateTime(fb.created_at)}</td>
+                                <td>${fb.title}</td>
+                                <td>${getCategoryText(fb.category)}</td>
+                                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                                <td><button class="btn btn-sm btn-outline-primary" onclick="showStudentFeedbackDetail(${fb.id})">查看详情</button></td>
+                            </tr>
+                        `;
+                    });
+                    feedbackHistory.innerHTML = html;
+                } else {
+                    feedbackHistory.innerHTML = '<tr><td colspan="5" class="text-center">暂无反馈记录</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载反馈信息时出错:', error);
+                document.getElementById('feedbackHistory').innerHTML = '<tr><td colspan="5" class="text-center">加载反馈信息失败</td></tr>';
+            }
+        }
+
+        function getCategoryText(category) {
+            const categories = {
+                'facility': '设施问题',
+                'hygiene': '卫生问题',
+                'noise': '噪音问题',
+                'security': '安全问题',
+                'other': '其他问题'
+            };
+            return categories[category] || category;
+        }
+
+        // ========== 管理员功能 ==========
+        async function loadAdminSectionData(sectionId) {
+            switch (sectionId) {
+                case 'adminDormManagement':
+                    await loadAdminDormitories();
+                    break;
+                case 'adminApplicationManagement':
+                    await loadAdminApplications();
+                    break;
+                case 'adminAnnouncementManagement':
+                    await loadAdminAnnouncements();
+                    break;
+                case 'adminFeedbackManagement':
+                    await loadAdminFeedbacks();
+                    break;
+            }
+        }
+
+        async function loadAdminDormitories() {
+            try {
+                const result = await getAdminDormitories();
+                const tableBody = document.getElementById('dormitoriesTable');
+
+                if (result && Array.isArray(result) && result.length > 0) {
+                    let html = '';
+                    result.forEach(dorm => {
+                        const statusClass = dorm.status === 'available' ? 'status-approved' :
+                                        dorm.status === 'full' ? 'status-rejected' : 'status-pending';
+                        const statusText = dorm.status === 'available' ? '可用' :
+                                        dorm.status === 'full' ? '已满' : '维护中';
+
+                        html += `
+                            <tr>
+                                <td>${dorm.building}</td>
+                                <td>${dorm.room_number}</td>
+                                <td>${dorm.capacity}</td>
+                                <td>${dorm.current_occupancy}</td>
+                                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-info me-1" onclick="viewDormitoryStudents(${dorm.id})">查看学生</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="handleDeleteDormitory(${dorm.id})">删除</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    tableBody.innerHTML = html;
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="6" class="text-center">暂无宿舍数据</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载宿舍信息时出错:', error);
+                document.getElementById('dormitoriesTable').innerHTML = '<tr><td colspan="6" class="text-center">加载宿舍信息失败</td></tr>';
+            }
+        }
+
+        async function loadAdminApplications() {
+            try {
+                const result = await getAllApplications();
+                const pendingTable = document.getElementById('pendingApplicationsTable');
+                const historyTable = document.getElementById('applicationHistoryTable');
+
+                if (result && Array.isArray(result) && result.length > 0) {
+                    let pendingHtml = '';
+                    let historyHtml = '';
+
+                    result.forEach(app => {
+                        const row = `
+                            <tr>
+                                <td>${app.student_id}</td>
+                                <td>${app.student_name}</td>
+                                <td>${formatDateTime(app.apply_date)}</td>
+                                <td>${app.building}</td>
+                                <td>${app.room_number}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-success me-1" onclick="handleProcessApplication(${app.id}, 'approve')">批准</button>
+                                    <button class="btn btn-sm btn-danger me-1" onclick="handleProcessApplication(${app.id}, 'reject')">拒绝</button>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="showApplicationDetail(${app.id})">详情</button>
+                                </td>
+                            </tr>
+                        `;
+
+                        if (app.status === 'pending') {
+                            pendingHtml += row;
+                        } else {
+                            const statusClass = app.status === 'approved' ? 'status-approved' : 'status-rejected';
+                            const statusText = app.status === 'approved' ? '已批准' : '已拒绝';
+
+                            historyHtml += `
+                                <tr>
+                                    <td>${app.student_id}</td>
+                                    <td>${app.student_name}</td>
+                                    <td>${formatDateTime(app.apply_date)}</td>
+                                    <td>${app.processed_date ? formatDateTime(app.processed_date) : '-'}</td>
+                                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                                    <td><button class="btn btn-sm btn-outline-primary" onclick="showApplicationDetail(${app.id})">详情</button></td>
+                                </tr>
+                            `;
+                        }
+                    });
+
+                    pendingTable.innerHTML = pendingHtml || '<tr><td colspan="6" class="text-center">暂无待处理申请</td></tr>';
+                    historyTable.innerHTML = historyHtml || '<tr><td colspan="6" class="text-center">暂无申请历史</td></tr>';
+                } else {
+                    pendingTable.innerHTML = '<tr><td colspan="6" class="text-center">暂无申请数据</td></tr>';
+                    historyTable.innerHTML = '<tr><td colspan="6" class="text-center">暂无申请历史</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载申请信息时出错:', error);
+                document.getElementById('pendingApplicationsTable').innerHTML = '<tr><td colspan="6" class="text-center">加载申请信息失败</td></tr>';
+                document.getElementById('applicationHistoryTable').innerHTML = '<tr><td colspan="6" class="text-center">加载申请历史失败</td></tr>';
+            }
+        }
+
+        async function loadAdminAnnouncements() {
+            try {
+                const result = await getAdminAnnouncements();
+                const tableBody = document.getElementById('announcementsTable');
+
+                if (result && Array.isArray(result) && result.length > 0) {
+                    let html = '';
+                    result.forEach(ann => {
+                        html += `
+                            <tr>
+                                <td>${ann.title}</td>
+                                <td>${formatDateTime(ann.created_at)}</td>
+                                <td>${ann.admin_name}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="handleEditAnnouncement(${ann.id}, '${escapeHtml(ann.title)}', '${escapeHtml(ann.content)}')">编辑</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="handleDeleteAnnouncement(${ann.id})">删除</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    tableBody.innerHTML = html;
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="4" class="text-center">暂无公告</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载公告时出错:', error);
+                document.getElementById('announcementsTable').innerHTML = '<tr><td colspan="4" class="text-center">加载公告失败</td></tr>';
+            }
+        }
+
+        async function loadAdminFeedbacks() {
+            try {
+                const result = await getAllFeedbacks();
+                const pendingTable = document.getElementById('pendingFeedbacksTable');
+                const resolvedTable = document.getElementById('resolvedFeedbacksTable');
+
+                if (result && Array.isArray(result) && result.length > 0) {
+                    let pendingHtml = '';
+                    let resolvedHtml = '';
+
+                    result.forEach(fb => {
+                        const row = `
+                            <tr>
+                                <td>${fb.student_id}</td>
+                                <td>${fb.student_name}</td>
+                                <td>${fb.title}</td>
+                                <td>${formatDateTime(fb.created_at)}</td>
+                                <td>${getCategoryText(fb.category)}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="showFeedbackDetail(${fb.id})">处理</button>
+                                </td>
+                            </tr>
+                        `;
+
+                        if (fb.status === 'pending') {
+                            pendingHtml += row;
+                        } else {
+                            resolvedHtml += `
+                                <tr>
+                                    <td>${fb.student_id}</td>
+                                    <td>${fb.student_name}</td>
+                                    <td>${fb.title}</td>
+                                    <td>${formatDateTime(fb.created_at)}</td>
+                                    <td>${fb.resolved_at ? formatDateTime(fb.resolved_at) : '-'}</td>
+                                    <td><span class="status-badge status-approved">已解决</span></td>
+                                    <td><button class="btn btn-sm btn-outline-info" onclick="showFeedbackDetail(${fb.id})">详情</button></td>
+                                </tr>
+                            `;
+                        }
+                    });
+
+                    pendingTable.innerHTML = pendingHtml || '<tr><td colspan="6" class="text-center">暂无待处理反馈</td></tr>';
+                    resolvedTable.innerHTML = resolvedHtml || '<tr><td colspan="7" class="text-center">暂无已处理反馈</td></tr>';
+                } else {
+                    pendingTable.innerHTML = '<tr><td colspan="6" class="text-center">暂无反馈数据</td></tr>';
+                    resolvedTable.innerHTML = '<tr><td colspan="7" class="text-center">暂无已处理反馈</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载反馈信息时出错:', error);
+                document.getElementById('pendingFeedbacksTable').innerHTML = '<tr><td colspan="6" class="text-center">加载反馈信息失败</td></tr>';
+                document.getElementById('resolvedFeedbacksTable').innerHTML = '<tr><td colspan="7" class="text-center">加载已处理反馈失败</td></tr>';
+            }
+        }
+
+        // 查看申请详情
+        async function showApplicationDetail(appId) {
+            try {
+                const result = await getAllApplications();
+                const app = result.find(a => a.id === appId);
+
+                if (app) {
+                    document.getElementById('applicationDetailContent').innerHTML = `
+                        <h5>申请详情</h5>
+                        <p><strong>学号：</strong>${app.student_id}</p>
+                        <p><strong>学生姓名：</strong>${app.student_name}</p>
+                        <p><strong>申请宿舍：</strong>${app.building}-${app.room_number}</p>
+                        <p><strong>申请时间：</strong>${formatDateTime(app.apply_date)}</p>
+                        <p><strong>状态：</strong>${app.status === 'pending' ? '待处理' : app.status === 'approved' ? '已批准' : app.status === 'checked_out' ? '已退宿' : app.status === 'cancelled' ? '已取消' : '已拒绝'}</p>
+                        ${app.processed_date ? `<p><strong>处理时间：</strong>${formatDateTime(app.processed_date)}</p>` : ''}
+                        ${app.admin_notes ? `<p><strong>处理意见：</strong>${app.admin_notes}</p>` : ''}
+                    `;
+
+                    const modal = new bootstrap.Modal(document.getElementById('applicationDetailModal'));
+                    modal.show();
+                }
+            } catch (error) {
+                console.error('获取申请详情出错:', error);
+                showAlert('获取申请详情失败', 'danger');
+            }
+        }
+
+        // 查看反馈详情
+        async function showFeedbackDetail(fbId) {
+            try {
+                const result = await getAllFeedbacks();
+                const fb = result.find(f => f.id === fbId);
+
+                if (fb) {
+                    document.getElementById('feedbackDetailContent').innerHTML = `
+                        <h5>反馈详情</h5>
+                        <p><strong>学号：</strong>${fb.student_id}</p>
+                        <p><strong>学生姓名：</strong>${fb.student_name}</p>
+                        <p><strong>问题标题：</strong>${fb.title}</p>
+                        <p><strong>问题类别：</strong>${getCategoryText(fb.category)}</p>
+                        <p><strong>问题描述：</strong></p>
+                        <p>${fb.content}</p>
+                        <p><strong>提交时间：</strong>${formatDateTime(fb.created_at)}</p>
+                        <p><strong>状态：</strong>${fb.status === 'pending' ? '待处理' : '已解决'}</p>
+                        ${fb.resolved_at ? `<p><strong>处理时间：</strong>${formatDateTime(fb.resolved_at)}</p>` : ''}
+                        ${fb.admin_response ? `<p><strong>管理员回复：</strong>${fb.admin_response}</p>` : ''}
+                    `;
+
+                    // 如果是待处理的反馈，显示处理表单
+                    if (fb.status === 'pending') {
+                        document.getElementById('feedbackResponseForm').innerHTML = `
+                            <hr>
+                            <h6>处理反馈</h6>
+                            <div class="mb-3">
+                                <label for="adminResponse" class="form-label">处理回复</label>
+                                <textarea class="form-control" id="adminResponse" rows="3" placeholder="请输入处理回复"></textarea>
+                            </div>
+                            <button class="btn btn-primary" onclick="submitFeedbackResponse(${fb.id})">提交处理</button>
+                        `;
+                    } else {
+                        document.getElementById('feedbackResponseForm').innerHTML = '';
+                    }
+
+                    const modal = new bootstrap.Modal(document.getElementById('feedbackDetailModal'));
+                    modal.show();
+                }
+            } catch (error) {
+                console.error('获取反馈详情出错:', error);
+                showAlert('获取反馈详情失败', 'danger');
+            }
+        }
+
+        // 查看学生自己的反馈详情
+        async function showStudentFeedbackDetail(fbId) {
+            try {
+                const result = await getMyFeedbacks();
+                const fb = result.find(f => f.id === fbId);
+
+                if (fb) {
+                    document.getElementById('feedbackDetailContent').innerHTML = `
+                        <h5>反馈详情</h5>
+                        <p><strong>问题标题：</strong>${fb.title}</p>
+                        <p><strong>问题类别：</strong>${getCategoryText(fb.category)}</p>
+                        <p><strong>问题描述：</strong></p>
+                        <p>${fb.content}</p>
+                        <p><strong>提交时间：</strong>${formatDateTime(fb.created_at)}</p>
+                        <p><strong>状态：</strong>${fb.status === 'pending' ? '待处理' : '已解决'}</p>
+                        ${fb.resolved_at ? `<p><strong>处理时间：</strong>${formatDateTime(fb.resolved_at)}</p>` : ''}
+                        ${fb.admin_response ? `<p><strong>管理员回复：</strong>${fb.admin_response}</p>` : ''}
+                    `;
+
+                    document.getElementById('feedbackResponseForm').innerHTML = '';
+
+                    const modal = new bootstrap.Modal(document.getElementById('feedbackDetailModal'));
+                    modal.show();
+                }
+            } catch (error) {
+                console.error('获取反馈详情出错:', error);
+                showAlert('获取反馈详情失败', 'danger');
+            }
+        }
+
+        // 提交反馈处理
+        async function submitFeedbackResponse(fbId) {
+            const response = document.getElementById('adminResponse').value;
+            if (!response) {
+                showAlert('请填写处理回复', 'danger');
+                return;
+            }
+
+            const result = await processFeedback(fbId, response);
+            if (result.success) {
+                showAlert('反馈处理成功', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('feedbackDetailModal')).hide();
+                loadAdminFeedbacks();
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        }
+
+        // ========== 初始化 ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            initPage();
+        });
+
+        // 将函数暴露给全局作用域，供HTML内联事件调用
+        window.handleProcessApplication = handleProcessApplication;
+        window.handleDeleteAnnouncement = handleDeleteAnnouncement;
+        window.handleDormApplication = handleDormApplication;
+        window.handleDeleteDormitory = handleDeleteDormitory;
+        window.handleEditAnnouncement = handleEditAnnouncement;
+        window.viewDormitoryStudents = viewDormitoryStudents;
+        window.forceCheckout = forceCheckout;
+        window.togglePasswordVisibility = togglePasswordVisibility;
+        window.showApplicationDetail = showApplicationDetail;
+        window.showFeedbackDetail = showFeedbackDetail;
+        window.showStudentFeedbackDetail = showStudentFeedbackDetail;
+        window.submitFeedbackResponse = submitFeedbackResponse;
+    </script>
+</body>
+</html>
