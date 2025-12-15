@@ -6,7 +6,7 @@
 1.克隆仓库：
   git clone https://github.com/TongNian123/js-forever/tree/main/dormitory  
 2.将文件安装到本地，放置在python环境下  
-3.安装依赖
+3.安装依赖：
   pip install requirments.txt  
 4.运行database.py文件  
 5.运行app.py文件
